@@ -9,6 +9,7 @@ build-backend = "hatchling.build"
 name = "zipsearch"
 dynamic = ["version"]
 description = "Updated efficient lookup based on uszipcode"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
 ]
