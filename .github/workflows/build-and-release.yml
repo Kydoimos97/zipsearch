@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - "v*.*.*"    # Trigger only on version tags like v1.0.0, v2.3.4, etc.
+      -
+permissions:
+  id-token: write    # REQUIRED for PyPI trusted publishing (OIDC)
+  contents: read
 
 jobs:
   release:
