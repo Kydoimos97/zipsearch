@@ -30,7 +30,8 @@ jobs:
         run: |
           . .venv/bin/activate
           uv build
-          uv publish -- --yes
+          ls -lh dist  # Debug: List built files
+          uv publish dist/* -- --yes
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
