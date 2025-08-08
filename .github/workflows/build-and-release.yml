@@ -19,7 +19,7 @@ jobs:
         uses: astral-sh/setup-uv@v3
 
       - name: Install hatch-vcs
-        run: uv pip install hatch-vcs --system
+        run: uv pip install --user hatch-vcs
 
       - name: Build package (with Hatch)
         run: uv build
