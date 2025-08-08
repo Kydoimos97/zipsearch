@@ -153,7 +153,7 @@ def build_fast_indices(sqlite_path: str = None):
         'coordinate_grid': coordinate_grid
     }
 
-    output_file = Path("indices.bin")
+    output_file = Path("../zipsearch/bin/indices.bin")
     with open(output_file, 'wb') as f:
         pickle.dump(all_indices, f, protocol=pickle.HIGHEST_PROTOCOL)
 
