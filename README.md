@@ -5,7 +5,7 @@
 [![Compatibility](https://img.shields.io/badge/API-100%25_compatible-blue)](https://github.com/your-repo/zipsearch)
 [![Python](https://img.shields.io/badge/Python-3.11+-blue)](https://github.com/your-repo/zipsearch)
 
-ZipSearch is a drop-in replacement for [`uszipcode`](https://pypi.org/project/uszipcode) that delivers **670x faster zipcode lookups** and **51,674x faster city/state searches** by using pre-built RAM indices instead of SQLite queries.
+ZipSearch is a drop-in replacement for [`uszipcode`](https://pypi.org/project/uszipcode) that delivers **500+x faster zipcode lookups** and **50k+x faster city/state searches** by using pre-built RAM indices instead of SQLite queries.
 
 ## Key Features
 
