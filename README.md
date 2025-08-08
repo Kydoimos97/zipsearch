@@ -1,6 +1,9 @@
-# census-enricher
+Fork of: https://pypi.org/project/uszipcode
+
+# uszipcode
 
 A Python package for enriching datasets with U.S. Census and ZIP code metadata.
+Updated to use the latest dependencies
 
 ## Installation
 
