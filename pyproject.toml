@@ -11,8 +11,10 @@ dynamic = ["version"]
 description = "Updated efficient lookup based on uszipcode"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = [
-]
+dependencies = []
+authors = [{name = "kydoimos97"}]
+urls = { "Source" = "https://github.com/Kydoimos97/zipsearch" }
+
 
 [tool.hatch.version]
 source = "vcs"
@@ -24,5 +26,5 @@ packages = ["zipsearch"]
 
 [tool.hatch.build]
 include = [
-  "zipsearch/bin/indices.bin"
+  "zipsearch/*"
 ]

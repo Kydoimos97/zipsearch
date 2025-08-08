@@ -1,12 +1,8 @@
-# zipsearch/__init__.py
-"""
-Updated __init__.py for your file structure
-"""
-
 # Import actual fast classes for direct access
 from .FastSearchEngine import FastSearchEngine
 from .FastZipcode import FastZipcode
-# Import backwards compatible classes (these now use fast infrastructure)
+
+# Import backwards compatible classes
 from .boilerplate import (
     SearchEngine,  # Now points to FastSearchEngine
     SimpleZipcode,  # Now points to FastZipcode
@@ -27,3 +23,4 @@ __all__ = [
     'FastSearchEngine',    # Direct access to fast version
     'FastZipcode',         # Direct access to fast dataclass
 ]
+
