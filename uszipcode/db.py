@@ -11,9 +11,9 @@ The dataset for ``uszipcode`` is from multiple source, and integrated by Sanhe H
 """
 
 import requests
+from atomicwrites import atomic_write
 from pathlib_mate import Path
 from pathlib_mate.helper import repr_data_size
-from atomicwrites import atomic_write
 
 SIMPLE_DB_FILE_DOWNLOAD_URL = "https://github.com/MacHu-GWU/uszipcode-project/releases/download/1.0.1.db/simple_db.sqlite"
 COMPREHENSIVE_DB_FILE_DOWNLOAD_URL = "https://github.com/MacHu-GWU/uszipcode-project/releases/download/1.0.1.db/comprehensive_db.sqlite"
@@ -24,11 +24,11 @@ DEFAULT_COMPREHENSIVE_DB_FILE_PATH = Path(USZIPCODE_HOME, "comprehensive_db.sqli
 
 
 def download_db_file(
-    db_file_path: str,
-    download_url: str,
-    chunk_size: int,
-    progress_size: int,
-):
+        db_file_path: str,
+        download_url: str,
+        chunk_size: int,
+        progress_size: int,
+        ):
     Path(db_file_path).parent.mkdir(parents=True, exist_ok=True)
 
     print(f"Download {db_file_path} from {download_url} ...")
