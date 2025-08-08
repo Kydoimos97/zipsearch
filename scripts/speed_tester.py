@@ -3,7 +3,7 @@
 Simple speed test comparison between old and new uszipcode implementations.
 Generates visualization saved to ./media/speed.png
 """
-
+import os
 import time
 import random
 from pathlib import Path
@@ -19,7 +19,7 @@ def generate_test_data():
 
     import pickle
 
-    indices_path = r"../zipsearch/bin/indices.bin"
+    indices_path = r"./zipsearch/bin/indices.bin"
 
     try:
         with open(indices_path, 'rb') as f:
@@ -103,7 +103,7 @@ def test_old_version():
         logger.info(f"Zipcode lookup: {zipcode_per_op*1000:.2f}ms per op, {zipcode_total_time:.2f}s total")
 
         # Test city/state lookups (much smaller sample - these are very slow)
-        citystate_test_size = 2500  # Only 5k operations for city/state lookups
+        citystate_test_size = 500  # Only 5k operations for city/state lookups
         logger.info(f"Running {citystate_test_size:,} city/state lookups...")
 
         start_time = time.time()
@@ -116,7 +116,7 @@ def test_old_version():
             except Exception as e:
                 logger.warning(f"Error in city/state lookup: {e}")
                 logger.warning(f"  {city}, {state}")
-            if (i + 1) % 500 == 0:  # Report every 1k for smaller test
+            if (i + 1) % 100 == 0:  # Report every 1k for smaller test
                 elapsed = time.time() - start_time
                 rate = (i + 1) / elapsed
                 logger.info(f"  {i+1:,}/{citystate_test_size:,} complete ({rate:.0f} ops/sec)")
@@ -217,120 +217,124 @@ def test_new_version():
     }
 
 def create_visualization(old_results, new_results):
-    """Create professional dark-mode performance comparison charts."""
+    """Create performance comparison charts focused on improvement."""
 
     # Set dark mode style
     plt.style.use('dark_background')
 
-    fig = plt.figure(figsize=(16, 10))
+    fig = plt.figure(figsize=(18, 12))
     fig.patch.set_facecolor('#1e1e1e')
 
-    # Colors - orange for slow, blue for fast
-    uszipcode_color = '#ff8c42'  # Orange for old/slow
-    zipsearch_color = '#4a90e2'  # Blue for new/fast
+    # Colors - muted gray for old, vibrant green for new/improved
+    old_color = '#666666'  # Muted gray for old/slow
+    new_color = '#8f2323'  # Vibrant green for new/improved
+    accent_color = '#ffffff'  # Orange accent for highlights
 
-    # Create grid layout
-    gs = fig.add_gridspec(2, 2, height_ratios=[1, 1], width_ratios=[1.2, 1])
+    # Create grid layout - 2x2 with different emphasis
+    gs = fig.add_gridspec(2, 2, height_ratios=[1.2, 1], width_ratios=[1.5, 1])
 
-    # Main performance comparison (horizontal bar chart)
+    # 1. Main speedup comparison (focus on improvement)
     ax1 = fig.add_subplot(gs[0, :])
 
     operations = ['Zipcode Lookup', 'City/State Lookup']
-    old_times_ms = [old_results['zipcode_lookup_time']*1000, old_results['citystate_lookup_time']*1000]
-    new_times_ms = [new_results['zipcode_lookup_time']*1000, new_results['citystate_lookup_time']*1000]
-
-    y_pos = np.arange(len(operations))
-    height = 0.35
-
-    # Create horizontal bars
-    bars1 = ax1.barh(y_pos - height/2, old_times_ms, height,
-                     label='uszipcode', color=uszipcode_color, alpha=0.8)
-    bars2 = ax1.barh(y_pos + height/2, new_times_ms, height,
-                     label='zipsearch', color=zipsearch_color, alpha=0.8)
-
-    ax1.set_xlabel('Time per Operation (ms) - Lower is Better', fontsize=12, color='white')
-    ax1.set_title('ZipCode Library Performance Comparison', fontsize=16, fontweight='bold', color='white', pad=20)
-    ax1.set_yticks(y_pos)
-    ax1.set_yticklabels(operations, fontsize=11, color='white')
-    ax1.set_xscale('log')
-    ax1.legend(loc='lower right', fontsize=11)
-    ax1.grid(True, alpha=0.2)
-    ax1.set_facecolor('#2a2a2a')
-
-    # Add value labels
-    for i, (bar, val) in enumerate(zip(bars1, old_times_ms)):
-        width = bar.get_width()
-        ax1.text(width * 1.1, bar.get_y() + bar.get_height()/2, f'{val:.2f}ms',
-                ha='left', va='center', fontsize=10, color='white', fontweight='bold')
-
-    for i, (bar, val) in enumerate(zip(bars2, new_times_ms)):
-        width = bar.get_width()
-        ax1.text(width * 1.1, bar.get_y() + bar.get_height()/2, f'{val:.4f}ms',
-                ha='left', va='center', fontsize=10, color='white', fontweight='bold')
-
-    # Processing time extrapolation chart
-    ax2 = fig.add_subplot(gs[1, 0])
-
-    # Operation counts for extrapolation
-    op_counts = np.array([1000, 10000, 100000, 1000000, 10000000])
-
-    # Calculate times for city/state lookups (worst case scenario)
-    old_times_sec = op_counts * old_results['citystate_lookup_time']
-    new_times_sec = op_counts * new_results['citystate_lookup_time']
-
-    # Convert to appropriate units
-    old_times_display = []
-    new_times_display = []
-    time_labels = []
-
-    for old_t, new_t, count in zip(old_times_sec, new_times_sec, op_counts):
-        if old_t < 60:
-            old_times_display.append(old_t)
-            new_times_display.append(new_t)
-            time_labels.append('seconds')
-        elif old_t < 3600:
-            old_times_display.append(old_t / 60)
-            new_times_display.append(new_t / 60)
-            time_labels.append('minutes')
-        else:
-            old_times_display.append(old_t / 3600)
-            new_times_display.append(new_t / 3600)
-            time_labels.append('hours')
-
-    ax2.plot(op_counts, old_times_display, 'o-', color=uszipcode_color,
-             linewidth=3, markersize=8, label='uszipcode', markerfacecolor=uszipcode_color)
-    ax2.plot(op_counts, new_times_display, 'o-', color=zipsearch_color,
-             linewidth=3, markersize=8, label='zipsearch', markerfacecolor=zipsearch_color)
-
-    ax2.set_xlabel('Number of Operations', fontsize=11, color='white')
-    ax2.set_ylabel('Processing Time', fontsize=11, color='white')
-    ax2.set_title('City/State Lookup Scaling', fontsize=13, fontweight='bold', color='white')
-    ax2.set_xscale('log')
-    ax2.set_yscale('log')
-    ax2.legend(fontsize=10)
-    ax2.grid(True, alpha=0.2)
-    ax2.set_facecolor('#2a2a2a')
-
-    # Speedup comparison
-    ax3 = fig.add_subplot(gs[1, 1])
-
     speedups = [
         old_results['zipcode_lookup_time'] / new_results['zipcode_lookup_time'],
         old_results['citystate_lookup_time'] / new_results['citystate_lookup_time']
     ]
 
-    bars = ax3.bar(operations, speedups, color=[zipsearch_color, zipsearch_color], alpha=0.8)
-    ax3.set_ylabel('Speedup Factor (x)', fontsize=11, color='white')
-    ax3.set_title('Performance Improvement', fontsize=13, fontweight='bold', color='white')
-    ax3.set_yscale('log')
-    ax3.grid(True, alpha=0.2, axis='y')
+    # Create horizontal bars showing speedup
+    bars = ax1.barh(operations, speedups, color=[new_color, new_color],
+                    alpha=0.9, height=0.6, edgecolor='white', linewidth=2)
+
+    ax1.set_xlabel('Performance Improvement (x times faster)', fontsize=14, color='white', fontweight='bold')
+    ax1.set_title('ZipSearch Performance Gains vs USZipcode', fontsize=18, fontweight='bold',
+                  color='white', pad=25)
+    ax1.grid(True, alpha=0.3, axis='x')
+    ax1.set_facecolor('#2a2a2a')
+
+    # Add speedup labels with emphasis
+    for i, (bar, speedup) in enumerate(zip(bars, speedups)):
+        width = bar.get_width()
+        ax1.text(width + max(speedups) * 0.02, bar.get_y() + bar.get_height()/2,
+                f'{speedup:.0f}x faster', ha='left', va='center',
+                fontsize=16, color=accent_color, fontweight='bold')
+
+        # Add baseline reference
+        ax1.axvline(x=1, color=old_color, linestyle='--', alpha=0.7, linewidth=2)
+        ax1.text(1, -0.3, 'USZipcode baseline', ha='center', va='top',
+                color=accent_color, fontsize=10, style='italic')
+
+    ax1.set_xlim(0, max(speedups) * 1.15)
+
+    # 2. Time comparison with emphasis on new performance
+    ax2 = fig.add_subplot(gs[1, 0])
+
+    old_times_ms = [old_results['zipcode_lookup_time']*1000, old_results['citystate_lookup_time']*1000]
+    new_times_ms = [new_results['zipcode_lookup_time']*1000, new_results['citystate_lookup_time']*1000]
+
+    x = np.arange(len(operations))
+    width = 0.35
+
+    # Old times in muted color, new times prominent
+    bars1 = ax2.bar(x - width/2, old_times_ms, width, label='USZipcode (old)',
+                    color=old_color, alpha=0.6)
+    bars2 = ax2.bar(x + width/2, new_times_ms, width, label='ZipSearch (new)',
+                    color=new_color, alpha=0.9)
+
+    ax2.set_ylabel('Time per Operation (ms)', fontsize=12, color='white')
+    ax2.set_title('Response Time Comparison', fontsize=14, fontweight='bold', color='white')
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(operations, fontsize=11)
+    ax2.set_yscale('log')
+    ax2.legend(fontsize=11)
+    ax2.grid(True, alpha=0.2)
+    ax2.set_facecolor('#2a2a2a')
+
+    # Add value labels - emphasize the new performance
+    for bar, val in zip(bars1, old_times_ms):
+        height = bar.get_height()
+        ax2.text(bar.get_x() + bar.get_width()/2., height * 1.1, f'{val:.1f}ms',
+                ha='center', va='bottom', fontsize=9, color=accent_color)
+
+    for bar, val in zip(bars2, new_times_ms):
+        height = bar.get_height()
+        ax2.text(bar.get_x() + bar.get_width()/2., height * 1.1, f'{val:.4f}ms',
+                ha='center', va='bottom', fontsize=10, color=accent_color, fontweight='bold')
+
+    # 3. Linear extrapolation chart for large-scale operations
+    ax3 = fig.add_subplot(gs[1, 1])
+
+    # Operation counts for realistic large-scale scenarios
+    op_counts = np.array([100000, 500000, 1000000, 5000000, 10000000])  # 100K to 10M
+
+    # Calculate processing times in minutes for city/state (worst case)
+    old_times_min = (op_counts * old_results['citystate_lookup_time']) / 60
+    new_times_min = (op_counts * new_results['citystate_lookup_time']) / 60
+
+    # Plot with emphasis on the new performance
+    ax3.plot(op_counts/1000000, old_times_min, 'o-', color=old_color,
+             linewidth=2, markersize=6, alpha=0.7, label='USZipcode')
+    ax3.plot(op_counts/1000000, new_times_min, 'o-', color=new_color,
+             linewidth=4, markersize=8, label='ZipSearch', markerfacecolor=new_color)
+
+    ax3.set_xlabel('Operations (Millions)', fontsize=12, color='white')
+    ax3.set_ylabel('Processing Time (Minutes)', fontsize=12, color='white')
+    ax3.set_title('Large-Scale Processing Time', fontsize=13, fontweight='bold', color='white')
+    ax3.legend(fontsize=11)
+    ax3.grid(True, alpha=0.3)
     ax3.set_facecolor('#2a2a2a')
 
-    # Add speedup labels
-    for bar, speedup in zip(bars, speedups):
-        height = bar.get_height()
-        ax3.text(bar.get_x() + bar.get_width()/2., height * 1.1, f'{speedup:.0f}x',
-                ha='center', va='bottom', fontsize=12, color='white', fontweight='bold')
+    # Add some key data points with labels
+    for i, (count, old_t, new_t) in enumerate(zip(op_counts, old_times_min, new_times_min)):
+        if i % 2 == 0:  # Label every other point to avoid clutter
+            if old_t > 60:  # Convert to hours if over 60 minutes
+                ax3.annotate(f'{old_t/60:.1f}h',
+                           (count/1000000, old_t), textcoords="offset points",
+                           xytext=(0,10), ha='center', fontsize=8, color=accent_color)
+            if new_t < 1:  # Show seconds if under 1 minute
+                ax3.annotate(f'{new_t*60:.0f}s',
+                           (count/1000000, new_t), textcoords="offset points",
+                           xytext=(0,-15), ha='center', fontsize=8, color=accent_color, fontweight='bold')
 
     # Style all axes
     for ax in [ax1, ax2, ax3]:
@@ -338,7 +342,14 @@ def create_visualization(old_results, new_results):
         for spine in ax.spines.values():
             spine.set_color('#555555')
 
+    # Add overall summary text
+    fig.text(0.02, 0.02,
+             f'Summary: ZipSearch delivers {speedups[0]:.0f}x faster zipcode lookups and {speedups[1]:.0f}x faster city/state queries',
+             fontsize=12, color=accent_color, fontweight='bold',
+             bbox=dict(boxstyle="round,pad=0.3", facecolor='#2a2a2a', alpha=0.8))
+
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.08)  # Make room for summary text
 
     # Save chart
     media_dir = Path('')
@@ -346,7 +357,7 @@ def create_visualization(old_results, new_results):
     output_path = media_dir / 'speed.png'
 
     plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='#1e1e1e')
-    logger.info(f"Speed comparison chart saved to {output_path}")
+    logger.info(f"Improved speed comparison chart saved to {output_path}")
     plt.show()
 
     return output_path
