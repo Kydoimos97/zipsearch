@@ -18,14 +18,19 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v3
 
+      - name: Create venv
+        run: uv venv .venv
+
       - name: Install hatch-vcs
-        run: uv pip install --user hatch-vcs
+        run: |
+          . .venv/bin/activate
+          uv pip install hatch-vcs
 
-      - name: Build package (with Hatch)
-        run: uv build
-
-      - name: Publish to PyPI (OIDC Trusted Publisher)
-        run: uv publish --yes
+      - name: Build and Publish
+        run: |
+          . .venv/bin/activate
+          uv build
+          uv publish --yes
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
