@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import json
 import enum
-import typing
+import json
 from functools import total_ordering
-from pathlib_mate import Path
+
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 import sqlalchemy_mate as sam
-import sqlalchemy_mate.api
+from sqlalchemy_mate.api import ExtendedBase
+from haversine import haversine, Unit
+
 from .state_abbr import (
     MAPPER_STATE_ABBR_SHORT_TO_LONG,
-)
-from haversine import haversine, Unit
+    )
 
 Base = orm.declarative_base()
 
@@ -28,7 +28,7 @@ class ZipcodeTypeEnum(enum.Enum):
 
 
 @total_ordering
-class AbstractSimpleZipcode(Base, sam.api.ExtendedBase):
+class AbstractSimpleZipcode(Base, ExtendedBase):
     """
     Base class for Zipcode.
     """
