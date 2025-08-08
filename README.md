@@ -17,7 +17,8 @@ ZipSearch is a drop-in replacement for [`uszipcode`](https://pypi.org/project/us
 - **Memory Efficient**: Pre-built indices loaded once at startup (11mb)
 
 ## Performance Comparison
-![speed.png](media/speed.png)
+
+![speed.png](https://github.com/Kydoimos97/zipsearch/blob/main/media/speed.png?raw=true)
 
 ## Installation
 
