@@ -1,12 +1,13 @@
 site_name: ZipSearch
 site_url: !ENV READTHEDOCS_CANONICAL_URL
 site_description: ZipSearch
+site_author: Kydoimos97
 
 # Navigation
 nav:
   - Home: index.md
   - API: api.md
-  - Us Zip Code Compatibility: legacy.md
+  - UsZipCode: legacy.md
   - Data Structure: zip-data.md
 
 theme:
@@ -92,8 +93,6 @@ markdown_extensions:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/WrenchAI/WrenchCL
+      link: https://github.com/Kydoimos97/zipsearch
     - icon: fontawesome/brands/python
-      link: https://pypi.org/project/wrenchcl/
-    - icon: fontawesome/brands/x-twitter
-      link: https://x.com/wrench_ai
+      link: https://pypi.org/project/zipsearch
