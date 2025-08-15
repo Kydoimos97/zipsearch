@@ -105,9 +105,9 @@ batch_results = engine.batch_city_state_lookup([
 ])
 ```
 
-## 📊 Zipcode Data Fields
+## Zipcode Data Fields
 
-Each zipcode object contains comprehensive demographic and geographic data:
+Each zipcode object contains comprehensive demographic and geographic data 1:1 copy from the great uszipcode dataset:
 
 ```python
 zipcode = search.by_zipcode("10001")
