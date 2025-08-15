@@ -49,9 +49,7 @@ class ComprehensiveZipcode(FastZipcode):
 class SearchEngine(FastSearchEngine):
     """
     Backwards compatibility alias for SearchEngine.
-    All existing code using SearchEngine will now use FastSearchEngine under the hood.
-
-    This maintains 100% API compatibility while providing 400-500x performance improvement.
+    This maintains 100% API compatibility
     """
 
     def __init__(self, simple_or_comprehensive=None, db_file_path=None, download_url=None, engine=None):
@@ -72,8 +70,57 @@ class SearchEngine(FastSearchEngine):
               lat=None, lng=None, radius=None, zipcode_type=None, sort_by=None,
               ascending=True, returns=None, **kwargs):
         """
-        Backwards compatible query method that maps to new fast methods.
-        Supports the most common query patterns from the original API.
+        Backwards compatible query method for searching zipcode data.
+
+        This method provides compatibility with the original zipsearch API while
+        leveraging the new fast search infrastructure. It supports multiple search
+        patterns and filters to find zipcodes based on various criteria.
+
+        Args:
+            zipcode (str, optional): Exact zipcode to lookup (e.g., "90210")
+            prefix (str, optional): Zipcode prefix to search (e.g., "902" finds all 902xx codes)
+            pattern (str, optional): Pattern to search within zipcode strings
+            city (str, optional): City name to search for
+            state (str, optional): State abbreviation (e.g., "CA", "NY")
+            lat (float, optional): Latitude for coordinate-based search
+            lng (float, optional): Longitude for coordinate-based search
+            radius (float, optional): Search radius in miles (requires lat/lng)
+            zipcode_type (ZipcodeTypeEnum, optional): Filter by zipcode type (STANDARD, PO_BOX, etc.)
+            sort_by (str, optional): Sort criteria (e.g., SORT_BY_DIST for distance)
+            ascending (bool, optional): Sort order direction. Defaults to True.
+            returns (int, optional): Maximum number of results to return
+            **kwargs: Additional demographic filters including:
+                - population_lower (int): Minimum population threshold
+                - population_upper (int): Maximum population threshold
+                - median_household_income_lower (int): Minimum income threshold
+                - median_household_income_upper (int): Maximum income threshold
+                - median_home_value_lower (int): Minimum home value threshold
+                - median_home_value_upper (int): Maximum home value threshold
+
+        Returns:
+            list[FastZipcode]: List of matching zipcode objects. Returns empty list if no matches.
+
+        Examples:
+            >>> engine = SearchEngine()
+            >>> # Single zipcode lookup
+            >>> results = engine.query(zipcode="90210")
+            >>>
+            >>> # Find all zipcodes starting with 902
+            >>> results = engine.query(prefix="902")
+            >>>
+            >>> # Search by city and state
+            >>> results = engine.query(city="Beverly Hills", state="CA")
+            >>>
+            >>> # Coordinate search within 10 miles
+            >>> results = engine.query(lat=34.0901, lng=-118.4065, radius=10)
+            >>>
+            >>> # Demographic filtering
+            >>> results = engine.query(state="CA", population_lower=50000, returns=10)
+
+        Note:
+            This method maintains 100% backwards compatibility with the original API.
+            Complex demographic queries are simplified but functional. For optimal
+            performance, prefer the new direct methods like by_zipcode(), by_city(), etc.
         """
 
         # Handle single zipcode lookup

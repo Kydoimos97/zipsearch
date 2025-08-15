@@ -1,3 +1,30 @@
 site_name: ZipSearch
-
-theme: readthedocs
+theme:
+  name: material
+  features:
+    - content.code.annotate
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        # See: https://mkdocstrings.github.io/python/usage/
+        python:
+          options:
+            docstring_style: sphinx
+            show_submodules: true
+            show_signature: true
+            show_source: true
+            separate_signature: true
+            group_by_category: true
+            show_bases: true
+            merge_init_into_class: true
+markdown_extensions:
+  - markdown_include.include:
+      base_path: .
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      linenums: true
+      use_pygments: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences

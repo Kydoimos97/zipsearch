@@ -227,7 +227,7 @@ Speedup: 51,674x faster
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License
 
 ## Acknowledgments
 
