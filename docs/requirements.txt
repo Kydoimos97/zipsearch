@@ -5,7 +5,9 @@
 #    pip-compile --output-file=docs/requirements.txt --strip-extras docs/requirements.in
 #
 babel==2.17.0
-    # via mkdocs-material
+    # via
+    #   mkdocs-git-revision-date-localized-plugin
+    #   mkdocs-material
 backrefs==5.9
     # via mkdocs-material
 certifi==2025.8.3
@@ -22,6 +24,10 @@ colorama==0.4.6
     #   mkdocs-material
 ghp-import==2.1.0
     # via mkdocs
+gitdb==4.0.12
+    # via gitpython
+gitpython==3.1.45
+    # via mkdocs-git-revision-date-localized-plugin
 griffe==1.12.1
     # via mkdocstrings-python
 idna==3.10
@@ -55,6 +61,7 @@ mkdocs==1.6.1
     # via
     #   -r docs/requirements.in
     #   mkdocs-autorefs
+    #   mkdocs-git-revision-date-localized-plugin
     #   mkdocs-material
     #   mkdocstrings
 mkdocs-autorefs==1.4.2
@@ -63,6 +70,8 @@ mkdocs-autorefs==1.4.2
     #   mkdocstrings-python
 mkdocs-get-deps==0.2.0
     # via mkdocs
+mkdocs-git-revision-date-localized-plugin==1.4.7
+    # via -r docs/requirements.in
 mkdocs-material==9.6.16
     # via -r docs/requirements.in
 mkdocs-material-extensions==1.3.1
@@ -89,6 +98,8 @@ pymdown-extensions==10.16.1
     #   mkdocstrings
 python-dateutil==2.9.0.post0
     # via ghp-import
+pytz==2025.2
+    # via mkdocs-git-revision-date-localized-plugin
 pyyaml==6.0.2
     # via
     #   mkdocs
@@ -101,6 +112,8 @@ requests==2.32.4
     # via mkdocs-material
 six==1.17.0
     # via python-dateutil
+smmap==5.0.2
+    # via gitdb
 urllib3==2.5.0
     # via requests
 watchdog==6.0.0

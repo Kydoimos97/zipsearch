@@ -1,13 +1,57 @@
 site_name: ZipSearch
+site_url: !ENV READTHEDOCS_CANONICAL_URL
+site_description: ZipSearch
+
+# Navigation
+nav:
+  - Home: index.md
+  - API: api.md
+  - Us Zip Code Compatibility: legacy.md
+  - Data Structure: zip-data.md
+
 theme:
   name: material
   features:
+    # Navigation & layout
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.sections
+    - navigation.indexes
+    - navigation.tracking
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    # Content & code
+    - content.code.copy
     - content.code.annotate
+    - content.tabs.link
+    # UX
+    - navigation.path
+
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: red
+      accent: red
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: red
+      accent: red
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+# Plugins
 plugins:
   - search
+  - git-revision-date-localized:
+      timezone: UTC
   - mkdocstrings:
       handlers:
-        # See: https://mkdocstrings.github.io/python/usage/
         python:
           options:
             docstring_style: sphinx
@@ -18,13 +62,38 @@ plugins:
             group_by_category: true
             show_bases: true
             merge_init_into_class: true
+
+# Markdown extensions
 markdown_extensions:
   - markdown_include.include:
       base_path: .
   - admonition
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.magiclink
+  - attr_list
+  - toc:
+      anchorlink: true
+      anchorlink_class: "toclink"
+  - md_in_html
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.highlight:
       anchor_linenums: true
       linenums: true
       use_pygments: true
-  - pymdownx.inlinehilite
-  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+# Social / extra info
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/WrenchAI/WrenchCL
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/wrenchcl/
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/wrench_ai
