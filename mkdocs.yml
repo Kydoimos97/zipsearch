@@ -1,0 +1,6 @@
+site_name: ZipSearch
+
+nav:
+  - Home: README.md
+
+theme: readthedocs
